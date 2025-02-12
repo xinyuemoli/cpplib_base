@@ -23,13 +23,44 @@ Json::Json(const std::string& str) : str_(str) {
   }
 }
 
+Json::Json(Json&& other) noexcept
+{
+    if (this != &other)
+    {
+        valid_ = other.valid_;
+        document_ = std::move(other.document_);
+        other.document_ = {};
+        other.valid_ = false;
+    }
+}
+
 Json::~Json() {}
+
+Json& Json::operator=(Json&& other)
+{
+    if (this != &other)
+    {
+        valid_ = other.valid_;
+        document_ = std::move(other.document_);
+        other.document_ = {};
+        other.valid_ = false;
+    }
+    return *this;
+}
 
 Json& Json::AddMember(const char* key, const std::string& value) {
   rapidjson::Document::AllocatorType& allocator = document_.GetAllocator();
   document_.AddMember(rapidjson::StringRef(key),
                       rapidjson::StringRef(value.c_str()), allocator);
   return *this;
+}
+
+Json& Json::AddMember(const char* key, const Json& value)
+{
+   rapidjson::Document::AllocatorType& allocator = document_.GetAllocator();
+   document_.AddMember(rapidjson::StringRef(key), const_cast<Json&>(value).document_,
+        allocator);
+   return *this;
 }
 
 Json& Json::AddMember(const char* key, const char* value) {

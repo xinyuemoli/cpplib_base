@@ -10,6 +10,7 @@
 namespace base {
 template <typename T>
 class Singleton {
+    friend T;
  public:
   ~Singleton() {}
 

@@ -15,8 +15,11 @@ class BASE_EXPORT Json {
  public:
   Json();
   Json(const std::string& str);
+  Json(Json&& other) noexcept;
   // Json(const rapidjson::Document& document);
   ~Json();
+
+  Json& operator=(Json&& other);
 
   std::string Str();
 
@@ -34,6 +37,8 @@ class BASE_EXPORT Json {
   }
 
   Json& AddMember(const char* key, const std::string& value);
+
+  Json& AddMember(const char* key, const Json& value);
 
   Json& AddMember(const char* key, const char* value);
 
@@ -129,10 +134,10 @@ class BASE_EXPORT Json {
 
   //! Set this value as an empty array.
   Value& SetArray();
-
+  rapidjson::Document document_;
  private:
   std::string str_;
-  rapidjson::Document document_;
+  
 
   bool valid_;
 
